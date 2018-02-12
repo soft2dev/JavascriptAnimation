@@ -1,0 +1,234 @@
+<html>
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            var setInt = null; // save setInterval()' return value
+            var statusStop = true; //save status of space bar keyboard
+            var StatusRight = true; //save status of animation movement direction
+            var w = window.outerWidth; //save window's size(width)
+            var h = window.outerHeight; //save window's size(height)
+            var heightInc = parseInt($('.animation-box').css('height')); //css : margin-top constant  
+            var widthInc = parseInt($('.animation-box').css('width')); //css : margin-left constant
+            var speed = 0.1; //increasing value of margin-left
+            var left = parseInt($('#left').val());
+            var right = parseInt($('#right').val());
+            var show_second = false,
+                show_first = true;
+            var n = left,
+                n2 = left; //speed of movement
+            // $('#div_2').css('margin-top', height + 'px');
+
+            var animation = function() { //function that happen animation
+                var obj1 = $('#div_1');
+                var obj2 = $('#div_2');
+                if (StatusRight == true) { // left direction
+                    //first div
+                    if (n2 + obj2.width() > w - left - right && !show_first) {
+                        obj1.css('margin-top', (heightInc + parseInt(obj2.css('margin-top'))) + 'px');
+                        show_first = true;
+                        n = left - obj1.width();
+                        var widthInc1 = obj2.width() - 20;
+                        if (widthInc1 < 0) widthInc1 = widthInc;
+                        obj1.width(widthInc1);
+                    }
+                    if (show_first) {
+                        obj1.show();
+                        n += speed;
+                        obj1.css('margin-left', n + 'px');
+                        // n += speed;
+                        if (n > w) {
+                            n = left;
+                            // show_second = false;
+                            show_first = false;
+                            obj1.hide();
+                        }
+                        if (parseInt(obj1.css('margin-top')) > h - heightInc) {
+                            obj1.css('margin-top', 0 + 'px')
+                        }
+                    }
+                    //second div
+                    if (n + obj1.width() > w - left - right & !show_second) {
+                        obj2.css('margin-left', -obj2.width() + 'px');
+                        show_second = true;
+                        obj2.css('margin-top', (heightInc + parseInt(obj1.css('margin-top'))) + 'px');
+                        var widthInc2 = obj1.width() - 20;
+                        if (widthInc2 < 0) widthInc2 = widthInc;
+                        obj2.width(widthInc2);
+
+                    }
+                    if (show_second) {
+                        obj2.show();
+                        n2 = parseFloat(obj2.css('margin-left')) + speed;
+                        obj2.css('margin-left', n2 + 'px');
+                        if (n2 > w) {
+                            n2 = 0;
+                            // show_second = false;
+                            show_second = false;
+                            obj2.hide();
+                        }
+                        if (parseInt(obj2.css('margin-top')) > h - heightInc) {
+                            obj2.css('margin-top', 0 + 'px')
+                        }
+                    }
+                }
+                if (StatusRight == false) { //right direction
+                    if (n2 < left && !show_first) {
+                        n = w - right;
+                        //first div
+                        obj1.css('margin-top', (parseInt(obj2.css('margin-top')) - heightInc) + 'px');
+                        show_first = true;
+                        var widthInc1 = obj2.width() + 20;
+                        if (widthInc1 > widthInc) widthInc1 = 20;
+                        obj1.width(widthInc1);
+                    }
+                    if (show_first) {
+                        obj1.show();
+                        n -= speed;
+                        obj1.css('margin-left', n + 'px');
+                        // n += speed;
+                        if (n < -obj1.width()) {
+
+                            // show_second = false;
+                            show_first = false;
+                            obj1.hide();
+                        }
+                        if (parseInt(obj1.css('margin-top')) < 0) {
+                            obj1.css('margin-top', (h - heightInc) + 'px')
+                        }
+                    }
+                    //second div
+                    if (n < left & !show_second) {
+                        obj2.css('margin-top', (parseInt(obj1.css('margin-top')) - heightInc) + 'px');
+                        show_second = true;
+                        n2 = w - right;
+                        var widthInc2 = obj1.width() + 20;
+                        if (widthInc2 > widthInc) widthInc2 = 20;
+                        obj2.width(widthInc2);
+                    }
+                    if (show_second) {
+                        obj2.show();
+                        n2 -= speed;
+                        obj2.css('margin-left', n2 + 'px');
+                        if (n2 < -obj2.width()) {
+                            // show_second = false;
+                            show_second = false;
+                            obj2.hide();
+                        }
+                        if (parseInt(obj2.css('margin-top')) < 0) {
+                            obj2.css('margin-top', (h - heightInc) + 'px')
+                        }
+                    }
+                }
+
+            };
+            setInt = setInterval(animation, 1); //timer event happen
+            $('#change').click(function() { //change movement speed,width,height of animation. 
+
+                if ($('#speed').val() != '' && $('#speed').val() != ' ') speed = parseInt($('#speed').val()) / 10;
+                if ($('#height').val() != '' && $('#height').val() != ' ') {
+                    heightInc = parseInt($('#height').val());
+                    $('.animation-box').css('height', heightInc);
+                }
+                if ($('#width').val() != '' && $('#width').val() != ' ') {
+                    widthInc = parseInt($('#width').val());
+                    $('.animation-box').css('width', widthInc);
+                }
+                $('#padding-left').width(parseFloat($('#left').val()) + 'px');
+                $('#padding-right').width(parseFloat($('#right').val()) + 'px');
+                $('#background').width(w - parseFloat($('#left').val()) - parseFloat($('#right').val()) + 'px');
+                $('#background').css('left', parseFloat($('#left').val()) + 'px');
+                $('#padding-right').css('left', (w - parseFloat($('#right').val())) + 'px');
+                console.log(w);
+            });
+            $('input').keypress(function(e) {
+                if (e.keyCode == 13) $('#change').trigger('click');
+            });
+            $('#change').trigger('click');
+            var spacebar = false;
+            $('body').keydown(function(e) { //happen keypress event
+                console.log(e.keyCode);
+                if (e.keyCode == 32) {
+                    if (statusStop == true) { // if you press spacebar,animation stops
+                        clearInterval(setInt);
+                        var top1 = $(window).scrollTop();
+                        var left1 = $(window).scrollLeft()
+                        $('body').css('overflow', 'hidden');
+                        $(window).scroll(function() {
+                            $(this).scrollTop(top).scrollLeft(left1);
+                        });
+                        statusStop = false
+                    } else if (statusStop == false) {
+                        setInt = setInterval(animation, 1) // if you press backspace again,animation alive.
+                        statusStop = true;
+                    }
+                }
+
+                if (e.keyCode == 37) { // if you press keyboard left again,animation move to left.
+                    StatusRight = false;
+                    animation();
+                }
+                if (e.keyCode == 39) { // if you press keyboard 'right' again,animation move to right.
+                    StatusRight = true;
+                    animation();
+                }
+            });
+            $('body').keyup(function(e) {
+                if (e.keyCode == 38) { // if you press keyboard 'under' again,animation move to left.
+                    $('#div_1').css('margin-top', (parseInt($('#div_1').css('margin-top')) - heightInc) + 'px');
+                    $('#div_2').css('margin-top', (parseInt($('#div_2').css('margin-top')) - heightInc) + 'px');
+                }
+                if (e.keyCode == 40) { // if you press keyboard 'above' again,animation move to left.
+                    $('#div_1').css('margin-top', (parseInt($('#div_1').css('margin-top')) + heightInc) + 'px');
+                    $('#div_2').css('margin-top', (parseInt($('#div_2').css('margin-top')) + heightInc) + 'px');
+                }
+            })
+        });
+    </script>
+    <style>
+        #div_1 {
+            background: #fe4307;
+            height: 50px;
+            width: 300px;
+            position: absolute;
+        }
+        
+        #div_2 {
+            background: #fe4307;
+            height: 50px;
+            width: 280px;
+            position: absolute;
+        }
+        
+        .box {
+            height: 100vh;
+            position: absolute;
+            float: left
+        }
+        
+        #background {
+            width: 100vw;
+        }
+        
+        label {
+            margin-left: 1%;
+        }
+    </style>
+</head>
+
+<body>
+    <div align='center' id="tool" style="overflow:hidden">
+        <label>Speed(px) :</label> <input id='speed' value="30" type="text"> <label>Height(px):</label> <input id='height' type="text"> <label>Width(px):</label> <input id='width' type="text">
+        <label>left-padding(px) :</label> <input id='left' type="text" value="100"><label>right-padding(px) :</label> <input id='right' value='100' type="text">
+        <label><label><button id='change'>Change</button>
+    </div>
+    <div id='padding-left' class="box" style="width:0%;"></div>
+        <div id="background" class="box" style="overflow:hidden;">
+            <div class="animation-box" id="div_1"></div>
+            <div class="animation-box" id="div_2" style="display:none;"></div>
+        </div>
+    <div id='padding-right' class="box"  style="width:0%;"></div>
+</body>
+
+</html>
